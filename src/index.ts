@@ -5,22 +5,18 @@ export type Withdrawal = Partial<Record<Bill, number>>;
 type Accumulator = { withdrawal: Withdrawal; remainingAmount: number };
 
 export const atm = (amount: number): Withdrawal => {
-  return ALL_BILLS.reduce(
-    (acc, bill) => {
-      if (acc.remainingAmount >= bill) {
-        const nextRemainingAmount = acc.remainingAmount % bill;
-        const multipleAmount = acc.remainingAmount - nextRemainingAmount;
-        const specificNbOfBill = multipleAmount / bill;
-        return {
-          withdrawal: {
-            ...acc.withdrawal,
-            [bill]: specificNbOfBill,
-          },
-          remainingAmount: nextRemainingAmount,
-        };
-      }
-      return acc;
-    },
-    { withdrawal: {}, remainingAmount: amount }
-  ).withdrawal;
+  return recursiveAtm(amount, ALL_BILLS);
+};
+
+const recursiveAtm = (amount: number, billArray: Readonly<Bill[]>): Withdrawal => {
+  if (amount === 0) return;
+
+  const [firstBill, ...rest] = billArray;
+  if (amount >= firstBill) {
+    const nextRemainingAmount = amount % firstBill;
+    const multipleAmount = amount - nextRemainingAmount;
+    const specificNbOfBill = multipleAmount / firstBill;
+    return { [firstBill]: specificNbOfBill, ...recursiveAtm(nextRemainingAmount, rest) };
+  }
+  return recursiveAtm(amount, rest);
 };
