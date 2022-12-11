@@ -62,3 +62,11 @@ it("should return several bills", function () {
   const expected: Withdrawal = { 20: 1, 10: 1 };
   expect(actual).toEqual(expected);
 });
+
+it("should throw an error if invalid amount", function () {
+  //Given
+  const amount = 5;
+  //Then
+  const expected: Withdrawal = { 20: 1, 10: 1 };
+  expect(atm(amount)).toEqual("Invalid amount");
+});
